@@ -1,6 +1,3 @@
-using Catalog.DataAccess.DbContext;
-using Catalog.DataAccess.Repositories;
-using Catalog.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
@@ -16,7 +13,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Catalog API",
+        Title = "Basket API",
         Version = "v1"
     });
 });
@@ -32,11 +29,6 @@ builder.Services.AddVersionedApiExplorer(setup =>
     setup.SubstituteApiVersionInUrl = true;
 });
 
-builder.Services.AddSingleton<ICatalogContext, CatalogContext>(); //https://mongodb.github.io/mongo-csharp-driver/2.14/reference/driver/connecting/#re-use
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
-builder.Services.Configure<MongoDbOptions>(builder.Configuration.GetSection("MongoDbOptions"));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket API v1");
     });
 }
 
