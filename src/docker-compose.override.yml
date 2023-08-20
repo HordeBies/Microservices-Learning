@@ -1,6 +1,17 @@
 version: '3.4'
 
 services:
+  portainer:
+    container_name: portainer
+    restart: always
+    ports:
+      - "8100:8000"
+      - "9443:9443"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
   catalogdb:
     container_name: catalogdb
     restart: always
@@ -18,3 +29,20 @@ services:
       - catalogdb
     ports:
       - "8000:8080"
+
+  basketdb:
+    container_name: basketdb
+    restart: always
+    ports:
+      - "6379:6379"
+
+  basket.api:
+    container_name: basket.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Redis=basketdb:6379
+    depends_on:
+      - basketdb
+    ports:
+      - "8001:8080"
+
