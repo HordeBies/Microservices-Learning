@@ -18,7 +18,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - catalog_data:/data/db
 
   catalog.api:
     container_name: catalog.api
@@ -45,6 +45,17 @@ services:
       - basketdb
     ports:
       - "8001:8080"
+  
+  pgadmin:
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "8101:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@bies.com
+      - PGADMIN_DEFAULT_PASSWORD=Admin123!
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
   discountdb:
     container_name: discountdb
@@ -58,14 +69,12 @@ services:
     volumes:
       - discount_data:/var/lib/postgresql/data
   
-  pgadmin:
-    container_name: pgadmin
-    restart: always
-    ports:
-      - "8101:80"
+  discount.api:
+    container_name: discount.api
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@bies.com
-      - PGADMIN_DEFAULT_PASSWORD=Admin123!
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-  
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DatabaseSettings__PostgreSqlConnectionString=Host=discountdb;Port=5432;Database=discount;Username=postgres;Password=Admin123!
+    depends_on:
+      - discountdb
+    ports:
+      - "8002:8080"
