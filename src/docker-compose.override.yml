@@ -46,3 +46,26 @@ services:
     ports:
       - "8001:8080"
 
+  discountdb:
+    container_name: discountdb
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Admin123!
+      - POSTGRES_DB=discount
+    volumes:
+      - discount_data:/var/lib/postgresql/data
+  
+  pgadmin:
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "8101:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@bies.com
+      - PGADMIN_DEFAULT_PASSWORD=Admin123!
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+  
