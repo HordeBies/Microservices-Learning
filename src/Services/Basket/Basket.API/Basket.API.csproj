@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Basket.DataAccess\Basket.DataAccess.csproj" />
+	  <ProjectReference Include="..\Basket.Services\Basket.Services.csproj" />
 	</ItemGroup>
 
 </Project>

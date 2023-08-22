@@ -10,6 +10,7 @@ namespace Discount.GRPC.Mapper
         {
             CreateMap<Coupon, CouponModel>()
             .ForMember(dest => dest.AmountScaled, opt => opt.MapFrom(src => Convert.ToInt64(src.Amount * 100)))
+            .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId ?? string.Empty))
             .ReverseMap()
             .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => (decimal)src.AmountScaled / 100.0m));
         }

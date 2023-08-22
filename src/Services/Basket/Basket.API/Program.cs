@@ -1,4 +1,6 @@
 using Basket.DataAccess.Repositories;
+using Basket.Services;
+using Discount.GRPC.Protos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
@@ -37,7 +39,8 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-
+builder.Services.AddScoped<IDiscountGrpcService, DiscountGrpcService>();
+builder.Services.AddGrpcClient<DiscountService.DiscountServiceClient>(o => o.Address = new(builder.Configuration.GetConnectionString("DiscountGrpc") ?? throw new Exception("DiscountGrpc connection string not found")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
