@@ -32,7 +32,7 @@ namespace Discount.DataAccess.Repositories
         public async Task<bool> DeleteDiscount(string couponCode, string? productId)
         {
             using var connection = new NpgsqlConnection(databaseOptions.PostgreSqlConnectionString);
-            var query = productId is null ? "DELETE FROM Coupon WHERE CouponCode = @CouponCode AND ProductId IS NULL" : "DELETE FROM Coupon WHERE CouponCode = @CouponCode AND ProductId = @ProductId";
+            var query = string.IsNullOrWhiteSpace(productId) ? "DELETE FROM Coupon WHERE CouponCode = @CouponCode AND ProductId IS NULL" : "DELETE FROM Coupon WHERE CouponCode = @CouponCode AND ProductId = @ProductId";
             var affected = await connection.ExecuteAsync(
                 query,
                 new { CouponCode = couponCode, ProductId = productId });
@@ -42,7 +42,7 @@ namespace Discount.DataAccess.Repositories
         public async Task<Coupon> GetDiscount(string couponCode, string? productId)
         {
             using var connection = new NpgsqlConnection(databaseOptions.PostgreSqlConnectionString);
-            var query = productId is null? "SELECT * FROM Coupon WHERE CouponCode = @CouponCode AND ProductId IS NULL" : "SELECT * FROM Coupon WHERE CouponCode = @CouponCode AND ProductId = @ProductId";
+            var query = string.IsNullOrWhiteSpace(productId) ? "SELECT * FROM Coupon WHERE CouponCode = @CouponCode AND ProductId IS NULL" : "SELECT * FROM Coupon WHERE CouponCode = @CouponCode AND ProductId = @ProductId";
             //var all = await connection.QueryAsync<Coupon>("select * from coupon");
             var coupon = await connection.QueryFirstOrDefaultAsync<Coupon>(
                 query,

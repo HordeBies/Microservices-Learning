@@ -16,15 +16,6 @@ namespace Discount.API.Controllers
             this.discountRepository = discountRepository ?? throw new ArgumentNullException(nameof(discountRepository));
         }
 
-        private async Task ValidateCoupon(Coupon coupon) // TODO: Use custom validation attributes
-        {
-            if (coupon.Amount <= 0)
-                ModelState.AddModelError("Amount", "Amount must be greater than 0.");
-            if (string.IsNullOrWhiteSpace(coupon.CouponCode) || coupon.CouponCode.Length < 5)
-                ModelState.AddModelError("CouponCode", "CouponCode must be at least 5 characters long.");
-
-        }
-
         //[HttpGet("{couponCode}", Name ="GetGlobalDiscount")]
         //[HttpGet("{couponCode}/{productId}", Name ="GetProductDiscount")]
         [HttpGet("{couponCode}", Name ="GetDiscount")]
@@ -36,30 +27,29 @@ namespace Discount.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Coupon), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<bool>> CreateDiscount([FromBody] Coupon coupon)
         {
             if ((await discountRepository.GetDiscount(coupon.CouponCode, coupon.ProductId)).Id != -1)
                 ModelState.AddModelError("CouponCode", "Coupon already exists.");
-            await ValidateCoupon(coupon);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             
-            var created = await discountRepository.CreateDiscount(coupon);
-            return Ok(created);
+            _ = await discountRepository.CreateDiscount(coupon);
+            return Ok(await discountRepository.GetDiscount(coupon.CouponCode, coupon.ProductId));
         }
         [HttpPut]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Coupon), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<bool>> UpdateDiscount([FromBody] Coupon coupon)
         {
-            await ValidateCoupon(coupon);
+            if ((await discountRepository.GetDiscount(coupon.CouponCode, coupon.ProductId)).Id != -1)
+                ModelState.AddModelError("CouponCode", "Coupon already exists.");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var updated = await discountRepository.UpdateDiscount(coupon);
-            return Ok(updated);
+            _ = await discountRepository.UpdateDiscount(coupon);
+            return Ok(await discountRepository.GetDiscount(coupon.CouponCode, coupon.ProductId));
         }
 
         // TODO: Instead of deleting just make it unusable. Better for logging, monitoring and analyzing.
