@@ -41,6 +41,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Redis=basketdb:6379
+      - ConnectionStrings__DiscountGrpc=http://discount.grpc:8080
     depends_on:
       - basketdb
     ports:
@@ -78,3 +79,14 @@ services:
       - discountdb
     ports:
       - "8002:8080"
+
+  discount.grpc:
+    container_name: discount.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DatabaseSettings__PostgreSqlConnectionString=Host=discountdb;Port=5432;Database=discount;Username=postgres;Password=Admin123!
+    depends_on:
+        - discountdb
+    ports:
+      - "8080" # We dont need to expose grpc port to outside world because it is only used by internal services
+
