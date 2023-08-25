@@ -88,5 +88,31 @@ services:
     depends_on:
         - discountdb
     ports:
-      - "8080" # We dont need to expose grpc port to outside world because it is only used by internal services
+      - "8080" # We dont need to expose grpc port to outside world because it is only used by internal services. But for debugging you can always expose it to 8003
 
+  orderingdb:
+    container_name: orderingdb
+    restart: always
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin123!
+      - MSSQL_PID=Developer
+    volumes:
+        - order_data:/var/opt/mssql
+      # - order_data/data:/var/opt/mssql/data
+      # - order_data/log:/var/opt/mssql/log
+      # - order_data/secrets:/var/opt/mssql/secrets
+
+  ordering.api:
+    container_name: ordering.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__OrderingConnectionString=Data Source=orderingdb,1433;Initial Catalog=OrderingDb;User ID=sa;Password=Admin123!;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
+    depends_on:
+      - orderingdb
+    ports:
+      - "8004:8080"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro

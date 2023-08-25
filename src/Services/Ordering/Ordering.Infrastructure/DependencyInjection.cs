@@ -19,10 +19,11 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<OrderingContext>(options => options.UseSqlServer(configuration.GetConnectionString("OrderingConnectionString")));
-            
+            services.AddScoped<IDbInitializerService, DbInitializerService>();
+
             services.AddScoped<IOrderRepository, OrderRepository>();
 
-            services.Configure<EmailSettings>(c => configuration.GetSection("EmailSettings"));
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.AddTransient<IEmailService, EmailService>();
 
             return services;

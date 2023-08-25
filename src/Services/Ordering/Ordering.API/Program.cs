@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Ordering.Application.Models;
+using Ordering.Application.ServiceContracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,5 +52,14 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
-
+await InitializeDatabase();
 app.Run();
+
+async Task InitializeDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializerService>();
+        await dbInitializer.Initialize();
+    }
+}
