@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Ordering.Application\Ordering.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.10" />
+    <PackageReference Include="MimeKit" Version="4.1.0" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Data.SqlClient;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,10 @@ builder.Services.AddVersionedApiExplorer(setup =>
     setup.GroupNameFormat = "'v'VVV";
     setup.SubstituteApiVersionInUrl = true;
 });
+
+
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
