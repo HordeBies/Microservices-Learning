@@ -1,8 +1,12 @@
+using EventBus.Messages.Common;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Ordering.API.Consumers;
+using Ordering.API.Mappings;
 using Ordering.Application.Models;
 using Ordering.Application.ServiceContracts;
 
@@ -36,6 +40,22 @@ builder.Services.AddVersionedApiExplorer(setup =>
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+builder.Services.AddMassTransit(c =>
+{
+    c.AddConsumer<BasketCheckoutConsumer>();
+    c.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ") ?? throw new Exception("RabbitMQ connection string not found"));
+        cfg.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, e =>
+        {
+            e.ConfigureConsumer<BasketCheckoutConsumer>(ctx);
+        });
+    });
+});
+
+builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<BasketCheckoutConsumer>();
 
 var app = builder.Build();
 

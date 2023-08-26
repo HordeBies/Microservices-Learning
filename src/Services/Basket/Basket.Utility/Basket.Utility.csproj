@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\EventBus.Messages\EventBus.Messages.csproj" />
+    <ProjectReference Include="..\Basket.Entities\Basket.Entities.csproj" />
   </ItemGroup>
 
 </Project>

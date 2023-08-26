@@ -42,8 +42,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Redis=basketdb:6379
       - ConnectionStrings__DiscountGrpc=http://discount.grpc:8080
+      - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - basketdb
+      - rabbitmq
     ports:
       - "8001:8080"
   
@@ -110,9 +112,21 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__OrderingConnectionString=Data Source=orderingdb,1433;Initial Catalog=OrderingDb;User ID=sa;Password=Admin123!;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
+      - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - orderingdb
+      - rabbitmq
     ports:
       - "8004:8080"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    hostname: ms-rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq  

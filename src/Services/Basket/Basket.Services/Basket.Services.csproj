@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Discount\Discount.Entities\Discount.Entities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Protobuf Include="..\..\Discount\Discount.GRPC\Protos\discount.proto" GrpcServices="Client">
       <Link>Protos\discount.proto</Link>
     </Protobuf>
