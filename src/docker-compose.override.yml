@@ -130,3 +130,17 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq  
+
+  ocelotapigw:
+    container_name: ocelotapigw
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - catalog.api
+      - basket.api
+      - discount.api
+      - discount.grpc
+      - ordering.api
+    ports:
+      - "8010:8080"
+

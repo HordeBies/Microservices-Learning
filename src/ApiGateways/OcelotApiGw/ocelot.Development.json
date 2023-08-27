@@ -1,0 +1,137 @@
+{
+  "Routes": [
+    // Catalog API
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "FileCacheOptions": {
+        "TtlSeconds": 60
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "FileCacheOptions": {
+        "TtlSeconds": 60
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog/GetProductByCategory/{category}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog/GetProductByCategory/{category}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "FileCacheOptions": {
+        "TtlSeconds": 60
+      }
+    },
+    // Basket API
+    {
+      "DownstreamPathTemplate": "/api/v1/Basket/{userName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "basket.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket/{userName}",
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ]
+      // Basket is already fetching from redis cache
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Basket/{userName}/Checkout",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "basket.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket/{userName}/Checkout",
+      "UpstreamHttpMethod": [ "POST" ],
+      "RateLimitOptions": { // Rate limiting for checkout, demo purpose
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 1
+      }
+    },
+    // Discount API
+    {
+      "DownstreamPathTemplate": "/api/v1/Discount",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "discount.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount",
+      "UpstreamHttpMethod": [ "POST", "PUT" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 1
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Discount/{couponCode}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "discount.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount/{couponCode}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "FileCacheOptions": {
+        "TtlSeconds": 60
+      }
+    },
+    // Ordering API
+    {
+      "DownstreamPathTemplate": "/api/v1/Order/{userName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ordering.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/{userName}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "FileCacheOptions": {
+        "TtlSeconds": 30
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:8010"
+  }
+}

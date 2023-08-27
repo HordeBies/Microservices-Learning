@@ -35,11 +35,14 @@ namespace Basket.API.Controllers
             return Ok(basket);
         }
 
-        [HttpPost]
+        [HttpPost("{userName}", Name = "UpdateBasket")]
         [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<ShoppingCart>> UpdateBasket([FromBody] ShoppingCart basket)
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<ShoppingCart>> UpdateBasket(string userName,[FromBody] ShoppingCart basket)
         {
-            // TODO: Communicate with Discount.GRPC and get discounted prices for the products in the basket.
+            if (userName != basket.UserName)
+                return BadRequest();
+
             foreach (var item in basket.Items)
             {
                 if(item.DiscountCode is not null)
@@ -68,17 +71,20 @@ namespace Basket.API.Controllers
             return Ok();
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("{userName}/[action]")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.Accepted)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Checkout([FromBody] BasketCheckout basketCheckout)
+        public async Task<ActionResult> Checkout(string userName, [FromBody] BasketCheckout basketCheckout)
         {
+            if (userName != basketCheckout.UserName)
+                return BadRequest();
             // get existing basket with total price 
             var basket = await basketRepository.GetBasket(basketCheckout.UserName);
             if (basket is null)
                 return BadRequest();
 
             // Create basketCheckoutEvent -- Set TotalPrice on basketCheckout eventMessage
+            // TODO: Add basket details to basketCheckout eventMessage
             var eventMessage = mapper.Map<BasketCheckoutEvent>(basketCheckout);
             eventMessage.TotalPrice = basket.TotalPrice;
 

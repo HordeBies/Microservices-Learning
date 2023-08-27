@@ -37,12 +37,16 @@ namespace Ordering.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut(Name = "UpdateOrder")]
+        [HttpPut("{id}",Name = "UpdateOrder")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult> UpdateOrder([FromBody] UpdateOrderCommand command)
+        public async Task<ActionResult> UpdateOrder(int id,[FromBody] UpdateOrderCommand command)
         {
+            if (id != command.Id)
+                return BadRequest();
+
             await mediator.Send(command);
             return NoContent();
         }
