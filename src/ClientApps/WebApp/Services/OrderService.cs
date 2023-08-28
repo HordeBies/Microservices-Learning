@@ -1,7 +1,7 @@
-﻿using Shopping.Aggregator.Extensions;
-using Shopping.Aggregator.Models;
+﻿using WebApp.Extensions;
+using WebApp.Models;
 
-namespace Shopping.Aggregator.Services
+namespace WebApp.Services
 {
     public class OrderService : IOrderService
     {
@@ -14,7 +14,7 @@ namespace Shopping.Aggregator.Services
 
         public async Task<IEnumerable<OrderResponseModel>> GetOrdersByUserName(string userName)
         {
-            var response = await client.GetAsync($"/api/v1/Order/{userName}");
+            var response = await client.GetAsync($"/Order/{userName}");
             return await response.ReadContentAs<List<OrderResponseModel>>() ?? new List<OrderResponseModel>();
         }
     }

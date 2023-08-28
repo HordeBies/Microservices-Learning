@@ -159,3 +159,21 @@ services:
     ports:
       - "8005:8080"
 
+
+  webapp:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      #- ASPNETCORE_HTTP_PORTS=8080
+      #- ASPNETCORE_HTTPS_PORTS=8081
+      - ApiSettings__GatewayAddress=http://ocelotapigw:8080
+    depends_on:
+      - ocelotapigw
+      - catalog.api 
+      - basket.api
+      - discount.api
+      - ordering.api
+    ports:
+      - "8006:8080"
+      #- "8081" # For https
+    #volumes:
+      #- ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro # For https

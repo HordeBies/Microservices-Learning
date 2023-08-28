@@ -64,6 +64,12 @@ services:
       context: .
       dockerfile: ApiGateways/Shopping.Aggregator/Dockerfile
 
+  webapp:
+    image: ${DOCKER_REGISTRY-}webapp
+    build:
+      context: .
+      dockerfile: ClientApps/WebApp/Dockerfile
+
 volumes:
   catalog_data:
   discount_data:
@@ -71,5 +77,6 @@ volumes:
   portainer_data:
   pgadmin_data:  
   rabbitmq_data:
+
 
 
