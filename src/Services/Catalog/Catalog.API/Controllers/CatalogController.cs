@@ -66,6 +66,7 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateProduct([FromBody] Product product)
         {
+            // TODO: Use a MassTransit to publish an event to RabbitMQ when a product is updated.
             return Ok(await productRepository.UpdateProduct(product));
         }
 
@@ -73,6 +74,7 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteProductById(string id)
         {
+            // TODO: Use a MassTransit to publish an event to RabbitMQ when a product is no longer available.
             return Ok(await productRepository.DeleteProduct(id));
         }
     }

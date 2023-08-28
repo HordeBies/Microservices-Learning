@@ -73,4 +73,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// TODO: Add MassTransit-RabbitMQ to listen product price/stock changed events to update basket items preferably async/background job
 app.Run();

@@ -45,7 +45,7 @@ namespace Basket.API.Controllers
 
             foreach (var item in basket.Items)
             {
-                if(item.DiscountCode is not null)
+                if (item.DiscountCode is not null)
                 {
                     var coupon = await discountGrpcService.GetDiscount(item.DiscountCode, item.ProductId);
                     item.DiscountAmount = (coupon.AmountScaled / 100.0m);
@@ -86,7 +86,7 @@ namespace Basket.API.Controllers
             // Create basketCheckoutEvent -- Set TotalPrice on basketCheckout eventMessage
             // TODO: Add basket details to basketCheckout eventMessage
             var eventMessage = mapper.Map<BasketCheckoutEvent>(basketCheckout);
-            eventMessage.TotalPrice = basket.TotalPrice;
+            eventMessage.TotalPrice = basket.TotalPrice; // lock the checkout price to the basket price
 
             // send checkout event to rabbitmq
             await publishEndpoint.Publish(eventMessage);
