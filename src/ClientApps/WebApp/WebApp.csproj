@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Common.Logging\Common.Logging.csproj" />
+  </ItemGroup>
+
 </Project>

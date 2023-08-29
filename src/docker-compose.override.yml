@@ -144,7 +144,6 @@ services:
     ports:
       - "8010:8080"
 
-
   shopping.aggregator:
     container_name: shopping.aggregator
     environment:
@@ -159,8 +158,8 @@ services:
     ports:
       - "8005:8080"
 
-
   webapp:
+    container_name: webapp
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       #- ASPNETCORE_HTTP_PORTS=8080
@@ -177,3 +176,27 @@ services:
       #- "8081" # For https
     #volumes:
       #- ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro # For https
+
+# Observability, resilience, monitoring
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+       - xpack.watcher.enabled=false
+       - xpack.security.enabled=false
+       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+       - discovery.type=single-node
+       # - xpack.profiling.enabled=true
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data"
+
+  kibana:
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_URL=https://elasticsearch:9200 # >> http://localhost:9200 <<
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"

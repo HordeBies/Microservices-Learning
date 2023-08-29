@@ -70,6 +70,13 @@ services:
       context: .
       dockerfile: ClientApps/WebApp/Dockerfile
 
+# Observability, resilience, monitoring
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.9.1
+
 volumes:
   catalog_data:
   discount_data:
@@ -77,6 +84,7 @@ volumes:
   portainer_data:
   pgadmin_data:  
   rabbitmq_data:
+  elasticsearch_data:
 
 
 
