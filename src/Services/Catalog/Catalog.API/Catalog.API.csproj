@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Common.Logging\Common.Logging.csproj" />
     <ProjectReference Include="..\Catalog.DataAccess\Catalog.DataAccess.csproj" />
     <ProjectReference Include="..\Catalog.Utility\Catalog.Utility.csproj" />
   </ItemGroup>

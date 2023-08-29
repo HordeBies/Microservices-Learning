@@ -1,12 +1,14 @@
+using Common.Logging;
 using Discount.DataAccess.DbInitializers;
 using Discount.DataAccess.Repositories;
 using Discount.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 
 builder.Services.AddControllers();

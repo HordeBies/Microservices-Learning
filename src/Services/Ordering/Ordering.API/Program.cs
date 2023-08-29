@@ -1,3 +1,4 @@
+using Common.Logging;
 using EventBus.Messages.Common;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +10,10 @@ using Ordering.API.Consumers;
 using Ordering.API.Mappings;
 using Ordering.Application.Models;
 using Ordering.Application.ServiceContracts;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 
 builder.Services.AddControllers();

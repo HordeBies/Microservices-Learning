@@ -1,11 +1,13 @@
+using Common.Logging;
 using Discount.DataAccess.DbInitializers;
 using Discount.DataAccess.Repositories;
 using Discount.GRPC.Mapper;
 using Discount.GRPC.Services;
 using Discount.Utilities;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection("DatabaseSettings"));

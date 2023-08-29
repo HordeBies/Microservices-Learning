@@ -15,4 +15,8 @@
     <PackageReference Include="Ocelot.Cache.CacheManager" Version="19.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Common.Logging\Common.Logging.csproj" />
+  </ItemGroup>
+
 </Project>

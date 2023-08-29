@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Common.Logging\Common.Logging.csproj" />
     <ProjectReference Include="..\Discount.DataAccess\Discount.DataAccess.csproj" />
     <ProjectReference Include="..\Discount.Utilities\Discount.Utilities.csproj" />
   </ItemGroup>

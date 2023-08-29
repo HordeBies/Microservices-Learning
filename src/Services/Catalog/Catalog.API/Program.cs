@@ -1,12 +1,14 @@
 using Catalog.DataAccess.DbContext;
 using Catalog.DataAccess.Repositories;
 using Catalog.Utility;
+using Common.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 
 builder.Services.AddControllers();

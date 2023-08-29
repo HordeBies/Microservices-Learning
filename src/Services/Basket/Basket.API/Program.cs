@@ -1,14 +1,16 @@
 using Basket.DataAccess.Repositories;
 using Basket.Services;
 using Basket.Utility.Mappings;
+using Common.Logging;
 using Discount.GRPC.Protos;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 
 builder.Services.AddControllers();
