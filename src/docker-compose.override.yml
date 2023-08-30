@@ -25,6 +25,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - MongoDbOptions__ConnectionString=mongodb://catalogdb:27017 
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
       - catalogdb
     ports:
@@ -43,6 +44,7 @@ services:
       - ConnectionStrings__Redis=basketdb:6379
       - ConnectionStrings__DiscountGrpc=http://discount.grpc:8080
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
       - basketdb
       - rabbitmq
@@ -77,6 +79,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - DatabaseSettings__PostgreSqlConnectionString=Host=discountdb;Port=5432;Database=discount;Username=postgres;Password=Admin123!
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
       - discountdb
     ports:
@@ -87,6 +90,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - DatabaseSettings__PostgreSqlConnectionString=Host=discountdb;Port=5432;Database=discount;Username=postgres;Password=Admin123!
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
         - discountdb
     ports:
@@ -113,6 +117,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__OrderingConnectionString=Data Source=orderingdb,1433;Initial Catalog=OrderingDb;User ID=sa;Password=Admin123!;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
       - orderingdb
       - rabbitmq
@@ -135,6 +140,7 @@ services:
     container_name: ocelotapigw
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
       - catalog.api
       - basket.api
@@ -151,6 +157,7 @@ services:
       - ApiSettings__BasketUrl=http://basket.api:8080
       - ApiSettings__CatalogUrl=http://catalog.api:8080
       - ApiSettings__OrderingUrl=http://ordering.api:8080
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
       - catalog.api
       - basket.api
@@ -165,6 +172,7 @@ services:
       #- ASPNETCORE_HTTP_PORTS=8080
       #- ASPNETCORE_HTTPS_PORTS=8081
       - ApiSettings__GatewayAddress=http://ocelotapigw:8080
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
     depends_on:
       - ocelotapigw
       - catalog.api 
@@ -195,7 +203,7 @@ services:
   kibana:
     container_name: kibana
     environment:
-      - ELASTICSEARCH_URL=https://elasticsearch:9200 # >> http://localhost:9200 <<
+      - ELASTICSEARCH_URL=http://elasticsearch:9200 # >> http://localhost:9200 <<
     depends_on:
       - elasticsearch
     ports:

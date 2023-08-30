@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Discount/Discount.API/Discount.API.csproj", "Services/Discount/Discount.API/"]
+COPY ["Shared/Common.Logging/Common.Logging.csproj", "Shared/Common.Logging/"]
 COPY ["Services/Discount/Discount.DataAccess/Discount.DataAccess.csproj", "Services/Discount/Discount.DataAccess/"]
 COPY ["Services/Discount/Discount.Entities/Discount.Entities.csproj", "Services/Discount/Discount.Entities/"]
 COPY ["Services/Discount/Discount.Utilities/Discount.Utilities.csproj", "Services/Discount/Discount.Utilities/"]

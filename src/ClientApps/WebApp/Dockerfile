@@ -10,6 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ClientApps/WebApp/WebApp.csproj", "ClientApps/WebApp/"]
+COPY ["Shared/Common.Logging/Common.Logging.csproj", "Shared/Common.Logging/"]
 RUN dotnet restore "ClientApps/WebApp/WebApp.csproj"
 COPY . .
 WORKDIR "/src/ClientApps/WebApp"

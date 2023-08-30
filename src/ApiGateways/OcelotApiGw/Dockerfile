@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ApiGateways/OcelotApiGw/OcelotApiGw.csproj", "ApiGateways/OcelotApiGw/"]
+COPY ["Shared/Common.Logging/Common.Logging.csproj", "Shared/Common.Logging/"]
 RUN dotnet restore "ApiGateways/OcelotApiGw/OcelotApiGw.csproj"
 COPY . .
 WORKDIR "/src/ApiGateways/OcelotApiGw"

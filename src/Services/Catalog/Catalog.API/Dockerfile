@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Catalog/Catalog.API/Catalog.API.csproj", "Services/Catalog/Catalog.API/"]
+COPY ["Shared/Common.Logging/Common.Logging.csproj", "Shared/Common.Logging/"]
 COPY ["Services/Catalog/Catalog.DataAccess/Catalog.DataAccess.csproj", "Services/Catalog/Catalog.DataAccess/"]
 COPY ["Services/Catalog/Catalog.Entities/Catalog.Entities.csproj", "Services/Catalog/Catalog.Entities/"]
 COPY ["Services/Catalog/Catalog.Utility/Catalog.Utility.csproj", "Services/Catalog/Catalog.Utility/"]
