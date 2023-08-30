@@ -3,6 +3,7 @@ using Discount.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +23,20 @@ namespace Discount.DataAccess.DbInitializers
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Initialize(int retry = 0)
+        public async Task Initialize()
         {
-            var retryForAvailability = retry;
-            try
+            var retryPolicy = Policy
+                .Handle<Exception>() //NpgsqlException
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (exception, timeSpan, retry, ctx) =>
+                {
+                    logger.LogError(exception, "[{prefix}] Exception {ExceptionType} detected. Retrying for #{retry}", "DiscountDb Initialization", exception?.GetType()?.Name, retry);
+                }
+            );
+
+            logger.LogInformation("Initializing database");
+
+            await retryPolicy.ExecuteAsync(async () =>
             {
-                logger.LogInformation("Initializing database");
                 using var connection = new NpgsqlConnection(databaseOptions.PostgreSqlConnectionString);
                 connection.Open();
 
@@ -43,19 +52,9 @@ namespace Discount.DataAccess.DbInitializers
                     command.CommandText = "INSERT INTO Coupon(productid, description, amount, couponcode) VALUES ('602d2149e773f2a3990b47f5', 'IPhone-X Seeded Discount Coupon', 150, 'IPHONE150'),('602d2149e773f2a3990b47f6', 'Samsung 10 Seeded Discount Coupon', 100, 'SAMSUNG100');";
                     command.ExecuteNonQuery();
                 }
+            });
 
-                logger.LogInformation("Database initialized");
-            }
-            catch (NpgsqlException ex)
-            {
-                logger.LogError(ex, "An error occurred while migrating or seeding the database");
-                if (retryForAvailability < 5)
-                {
-                    retryForAvailability++;
-                    System.Threading.Thread.Sleep(2000);
-                    await Initialize(retryForAvailability);
-                }
-            }
+            logger.LogInformation("Database initialized");
         }
     }
 }

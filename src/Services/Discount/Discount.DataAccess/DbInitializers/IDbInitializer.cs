@@ -8,6 +8,6 @@ namespace Discount.DataAccess.DbInitializers
 {
     public interface IDbInitializer
     {
-        Task Initialize(int retry = 0);
+        Task Initialize();
     }
 }

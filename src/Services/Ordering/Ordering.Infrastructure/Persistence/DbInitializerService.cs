@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Ordering.Application.ServiceContracts;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,31 +22,27 @@ namespace Ordering.Infrastructure.Persistence
             this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public Task Initialize(int retry = 0)
+        public Task Initialize()
         {
-            int retryForAvailability = retry;
+            logger.LogInformation("Initializing database");
 
-            try
+            var retryPolicy = Policy
+                .Handle<Exception>() // SqlException
+                .WaitAndRetry(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (exception, timeSpan, retry, ctx) =>
+                {
+                    logger.LogError(exception, "[{prefix}] Exception {ExceptionType} detected. Retrying for #{retry}", "OrderingDb Initialization", exception?.GetType()?.Name, retry);
+                }
+            );
+
+            retryPolicy.Execute(() =>
             {
-                logger.LogInformation("Migrating database associated with context {DbContextName}", typeof(OrderingContext).Name);
-
                 if (context.Database.GetPendingMigrations().Any())
                 {
                     context.Database.Migrate();
                 }
-            }
-            catch (SqlException e)
-            {
-                logger.LogError(e, "An error occurred while migrating the database used on context {DbContextName}", typeof(OrderingContext).Name);
+            });
 
-                if(retryForAvailability < 50)
-                {
-                    retryForAvailability++;
-                    Task.Delay(2000);
-                    Initialize(retryForAvailability);
-                }
-            }
-
+            logger.LogInformation("Database initialized");
             return Task.CompletedTask;
         }
     }

@@ -8,6 +8,6 @@ namespace Ordering.Application.ServiceContracts
 {
     public interface IDbInitializerService
     {
-        Task Initialize(int retry = 0);
+        Task Initialize();
     }
 }
