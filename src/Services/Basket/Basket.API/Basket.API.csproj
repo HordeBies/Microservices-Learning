@@ -11,7 +11,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AspNetCore.HealthChecks.Redis" Version="7.0.0" />
+		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.1.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="Grpc.HealthCheck" Version="2.56.0" />
 		<PackageReference Include="MassTransit" Version="8.1.0" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />

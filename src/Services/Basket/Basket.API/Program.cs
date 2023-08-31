@@ -3,15 +3,28 @@ using Basket.Services;
 using Basket.Utility.Mappings;
 using Common.Logging;
 using Discount.GRPC.Protos;
+using Grpc.Health.V1;
+using Grpc.Net.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
+builder.Services.AddHealthChecks().AddRedis(builder.Configuration.GetConnectionString("Redis") ?? throw new Exception("Redis connection string not found"), "redis", HealthStatus.Unhealthy).AddAsyncCheck("discount-grpc", async () =>
+    {
+        var channel = GrpcChannel.ForAddress(builder.Configuration.GetConnectionString("DiscountGrpc") ?? throw new Exception("DiscountGrpc connection string not found"));
+        var client = new Health.HealthClient(channel);
+
+        var response = await client.CheckAsync(new HealthCheckRequest());
+        var status = response.Status;
+        
+        return status == HealthCheckResponse.Types.ServingStatus.Serving ? HealthCheckResult.Healthy(): HealthCheckResult.Unhealthy("DiscountGrpc Server is not healthy!");
+    });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -74,6 +87,11 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/hc", new()
+{
+    Predicate = _ => true,
+    ResponseWriter = HealthChecks.UI.Client.UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 // TODO: Add MassTransit-RabbitMQ to listen product price/stock changed events to update basket items preferably async/background job
 app.Run();

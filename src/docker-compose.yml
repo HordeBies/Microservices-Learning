@@ -77,6 +77,12 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:8.9.1
 
+  webstatus:
+    image: ${DOCKER_REGISTRY-}webstatus
+    build:
+      context: .
+      dockerfile: Monitoring/WebStatus/Dockerfile
+
 volumes:
   catalog_data:
   discount_data:
@@ -85,6 +91,7 @@ volumes:
   pgadmin_data:  
   rabbitmq_data:
   elasticsearch_data:
+
 
 
 

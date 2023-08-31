@@ -10,11 +10,13 @@ using Ordering.API.Consumers;
 using Ordering.API.Mappings;
 using Ordering.Application.Models;
 using Ordering.Application.ServiceContracts;
+using Ordering.Infrastructure.Persistence;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
+builder.Services.AddHealthChecks().AddDbContextCheck<OrderingContext>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -74,6 +76,11 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/hc", new()
+{
+    Predicate = _ => true,
+    ResponseWriter = HealthChecks.UI.Client.UIResponseWriter.WriteHealthCheckUIResponse
+});
 await InitializeDatabase();
 app.Run();
 

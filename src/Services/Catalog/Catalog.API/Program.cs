@@ -10,6 +10,8 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
+builder.Services.AddHealthChecks()
+    .AddMongoDb(builder.Configuration["MongoDbOptions:ConnectionString"]?? throw new Exception("MongoDb Connection String is not configured"), "mongodb", Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -54,5 +56,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/hc", new()
+{
+    Predicate = _ => true,
+    ResponseWriter = HealthChecks.UI.Client.UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
