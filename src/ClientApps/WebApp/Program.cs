@@ -31,6 +31,8 @@ builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri(builder.Configuration["ApiSettings:GatewayAddress"] ?? throw new Exception("GatewayAddress configuration not found")), name: "ocelot-api-gateway", HealthStatus.Degraded);
+builder.AddAndConfigureOpenTelemetryTracing();
+
 builder.Services.AddRazorPages();
 
 var baseAddress = builder.Configuration["ApiSettings:GatewayAddress"] ?? throw new Exception("GatewayAddress not configured!");

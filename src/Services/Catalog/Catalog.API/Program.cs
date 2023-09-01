@@ -1,3 +1,4 @@
+using Catalog.API.Controllers;
 using Catalog.DataAccess.DbContext;
 using Catalog.DataAccess.Repositories;
 using Catalog.Utility;
@@ -8,13 +9,14 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
-// Add services to the container.
 builder.Services.AddHealthChecks()
     .AddMongoDb(builder.Configuration["MongoDbOptions:ConnectionString"]?? throw new Exception("MongoDb Connection String is not configured"), "mongodb", Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
+builder.AddAndConfigureOpenTelemetryTracing();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

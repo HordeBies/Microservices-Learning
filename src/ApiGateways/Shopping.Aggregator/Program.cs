@@ -34,6 +34,7 @@ builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri(builder.Configuration["ApiSettings:CatalogUrl"] + "/swagger/index.html" ?? throw new Exception("CatalogUrl configuration not found")), name: "catalog-api", HealthStatus.Degraded)
     .AddUrlGroup(new Uri(builder.Configuration["ApiSettings:BasketUrl"] + "/swagger/index.html" ?? throw new Exception("BasketUrl configuration not found")), name: "basket-api", HealthStatus.Degraded)
     .AddUrlGroup(new Uri(builder.Configuration["ApiSettings:OrderingUrl"] + "/swagger/index.html" ?? throw new Exception("OrderingUrl configuration not found")), name: "ordering-api", HealthStatus.Degraded);
+builder.AddAndConfigureOpenTelemetryTracing();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -83,6 +83,12 @@ services:
       context: .
       dockerfile: Monitoring/WebStatus/Dockerfile
 
+  # jaeger:
+  #   image: jaegertracing/all-in-one:1.6
+
+  zipkin:
+    image: openzipkin/zipkin
+
 volumes:
   catalog_data:
   discount_data:

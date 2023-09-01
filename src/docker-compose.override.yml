@@ -26,6 +26,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - MongoDbOptions__ConnectionString=mongodb://catalogdb:27017 
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
     depends_on:
       - catalogdb
     ports:
@@ -45,6 +46,7 @@ services:
       - ConnectionStrings__DiscountGrpc=http://discount.grpc:8080
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
     depends_on:
       - basketdb
       - rabbitmq
@@ -80,6 +82,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - DatabaseSettings__PostgreSqlConnectionString=Host=discountdb;Port=5432;Database=discount;Username=postgres;Password=Admin123!
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
     depends_on:
       - discountdb
     ports:
@@ -91,6 +94,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - DatabaseSettings__PostgreSqlConnectionString=Host=discountdb;Port=5432;Database=discount;Username=postgres;Password=Admin123!
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
     depends_on:
         - discountdb
     ports:
@@ -118,6 +122,7 @@ services:
       - ConnectionStrings__OrderingConnectionString=Data Source=orderingdb,1433;Initial Catalog=OrderingDb;User ID=sa;Password=Admin123!;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
     depends_on:
       - orderingdb
       - rabbitmq
@@ -158,6 +163,7 @@ services:
       - ApiSettings__CatalogUrl=http://catalog.api:8080
       - ApiSettings__OrderingUrl=http://ordering.api:8080
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
     depends_on:
       - catalog.api
       - basket.api
@@ -173,6 +179,7 @@ services:
       #- ASPNETCORE_HTTPS_PORTS=8081
       - ApiSettings__GatewayAddress=http://ocelotapigw:8080
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
     depends_on:
       - ocelotapigw
       - catalog.api 
@@ -228,3 +235,20 @@ services:
     ports:
       - "8007:8080"
 
+  # jaeger:
+  #   container_name: jaeger
+  #   restart: always
+  #   ports:
+  #     - "5775:5775/udp"
+  #     - "6831:6831/udp"
+  #     - "6832:6832/udp"
+  #     - "5778:5778"
+  #     - "16686:16686"
+  #     - "14268:14268"
+  #     - "9411:9411"
+
+  zipkin:
+    container_name: zipkin
+    restart: always
+    ports:
+      - "9411:9411"

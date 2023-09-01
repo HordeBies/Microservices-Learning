@@ -1,6 +1,7 @@
 using Common.Logging;
 using EventBus.Messages.Common;
 using MassTransit;
+using MassTransit.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 builder.Services.AddHealthChecks().AddDbContextCheck<OrderingContext>();
+builder.AddAndConfigureOpenTelemetryTracing(trace => trace.AddSource(DiagnosticHeaders.DefaultListenerName));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -10,5 +10,12 @@
 		<PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
 		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
+		<PackageReference Include="OpenTelemetry.Api" Version="1.5.1" />
+		<!--<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.5.1" />-->
+		<!--<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />-->
+		<PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.5.1" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.5.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.5.1-beta.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.5.1-beta.1" />
 	</ItemGroup>
 </Project>

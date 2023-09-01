@@ -6,10 +6,12 @@ using Discount.GRPC.Protos;
 using Grpc.Health.V1;
 using Grpc.Net.Client;
 using MassTransit;
+using MassTransit.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Trace;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,7 @@ builder.Services.AddHealthChecks().AddRedis(builder.Configuration.GetConnectionS
         
         return status == HealthCheckResponse.Types.ServingStatus.Serving ? HealthCheckResult.Healthy(): HealthCheckResult.Unhealthy("DiscountGrpc Server is not healthy!");
     });
+builder.AddAndConfigureOpenTelemetryTracing(trace => trace.AddSource(DiagnosticHeaders.DefaultListenerName));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 builder.Services.AddHealthChecks().AddNpgSql(builder.Configuration["DatabaseSettings:PostgreSqlConnectionString"] ?? throw new Exception("DatabaseSettings:PostgreSqlConnectionString configuration not found"), name: "postgres", failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
+builder.AddAndConfigureOpenTelemetryTracing();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

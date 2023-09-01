@@ -11,6 +11,7 @@ builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks().AddNpgSql(builder.Configuration["DatabaseSettings:PostgreSqlConnectionString"] ?? throw new Exception("DatabaseSettings:PostgreSqlConnectionString configuration not found"), name: "postgres", failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
+builder.AddAndConfigureOpenTelemetryTracing();
 
 builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
