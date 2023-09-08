@@ -1,0 +1,105 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+
+    @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
+    {
+        <div class="alert alert-warning">
+            <strong>Invalid login request</strong>
+            There are no register schemes configured for this request.
+        </div>
+    }
+
+    @if (Model.EnableLocalLogin)
+    {
+        <form class="col-md-8 row" id="registerForm" asp-route="Register" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <h2 class="col-12">Create a new account.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" class="form-control" autocomplete="username" aria-required="true" placeholder="username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="GivenName">Given Name</label>
+                <input asp-for="GivenName" class="form-control" autocomplete="name" aria-required="true" placeholder="name" />
+                <span asp-validation-for="GivenName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="FamilyName">Family Name</label>
+                <input asp-for="FamilyName" class="form-control" autocomplete="familyname" aria-required="true" placeholder="surname" />
+                <span asp-validation-for="FamilyName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" class="form-control" autocomplete="password" aria-required="true" placeholder="Pass123$" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" autocomplete="password" aria-required="true" placeholder="Pass123$" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="Website">Website</label>
+                <input asp-for="Website" class="form-control" autocomplete="website" aria-required="true" placeholder="www.website.com" />
+                <span asp-validation-for="Website" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 col-md-6">
+                <label asp-for="Role" class="ms-2 text-muted">Role</label>
+                <br />
+                <select asp-for="Role" asp-items="@Model.Roles.Select(r => new SelectListItem(r,r))" class="form-control form-select">
+                    <option disabled selected>Select Role</option>
+                </select>
+            </div>
+            <div class="col-12 text-center">
+                <button id="registerSubmit" type="submit" class="w-100 mb-3 btn btn-lg btn-primary ">Register</button>
+                <span>Already have an account? <a asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">Sign in</a></span>
+            </div>
+        </form>
+    }
+    @if (Model.VisibleExternalProviders.Any())
+    {
+        <div class="col-md-4">
+            <section>
+                <h3>Use another service to register.</h3>
+                <hr />
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="list-inline">
+                            @foreach (var provider in Model.VisibleExternalProviders)
+                            {
+                                <li class="list-inline-item">
+                                    <a class="btn btn-secondary"
+                                       asp-controller="External"
+                                       asp-action="Challenge"
+                                       asp-route-scheme="@provider.AuthenticationScheme"
+                                       asp-route-returnUrl="@Model.ReturnUrl">
+                                        @provider.DisplayName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/Identity/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/Identity/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
