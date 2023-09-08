@@ -5,6 +5,7 @@ using IdentityServer4.EntityFramework.Mappers;
 using IdentityServerHost.Quickstart.UI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 using System.Security.Claims;
 
 namespace IdentityServer.Data.Services
@@ -16,30 +17,48 @@ namespace IdentityServer.Data.Services
         private readonly ApplicationDbContext applicationContext;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly ILogger<DbInitializerService> logger;
 
-        public DbInitializerService(PersistedGrantDbContext persistedGrantDbContext, ConfigurationDbContext configContext, ApplicationDbContext applicationContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public DbInitializerService(PersistedGrantDbContext persistedGrantDbContext, ConfigurationDbContext configContext, ApplicationDbContext applicationContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<DbInitializerService> logger)
         {
             this.persistedGrantDbContext = persistedGrantDbContext ?? throw new ArgumentNullException(nameof(persistedGrantDbContext));
             this.configContext = configContext ?? throw new ArgumentNullException(nameof(configContext));
             this.applicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
             this.userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             this.roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Initialize()
         {
-            // Configure IS4
-            persistedGrantDbContext.Database.Migrate();
-            configContext.Database.Migrate();
+            var retryPolicy = Policy
+                .Handle<Exception>() //NpgsqlException
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (exception, timeSpan, retry, ctx) =>
+                {
+                    logger.LogError(exception, "[{prefix}] Exception {ExceptionType} detected. Retrying for #{retry}", "DiscountDb Initialization", exception?.GetType()?.Name, retry);
+                }
+            );
 
-            await SeedIs4Configs();
+            logger.LogInformation("Initializing Identity Server Persistance");
 
-            // Configure Identity
-            applicationContext.Database.Migrate();
 
-            await SeedRoles();
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                // Configure IS4
+                persistedGrantDbContext.Database.Migrate();
+                configContext.Database.Migrate();
 
-            await SeedUsers();
+                await SeedIs4Configs();
+
+                // Configure Identity
+                applicationContext.Database.Migrate();
+
+                await SeedRoles();
+
+                await SeedUsers();
+            });
+
+            logger.LogInformation("Identity Server Initialized");
         }
 
         private async Task SeedIs4Configs()

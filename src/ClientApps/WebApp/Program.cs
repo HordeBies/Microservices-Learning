@@ -136,7 +136,9 @@ builder.Services.AddHttpClient("IDPClient", client =>
     client.DefaultRequestHeaders.Clear();
     //client.DefaultRequestHeaders.Accept.Add(new("application/json"));
     client.DefaultRequestHeaders.Add(Microsoft.Net.Http.Headers.HeaderNames.Accept, "application/json");
-});
+})
+    .AddPolicyHandler(retryPolicy)
+    .AddPolicyHandler(circuitBreakerPolicy);
 
 var app = builder.Build();
 
