@@ -27,6 +27,7 @@ services:
       - MongoDbOptions__ConnectionString=mongodb://catalogdb:27017 
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
       - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - catalogdb
     ports:
@@ -47,6 +48,7 @@ services:
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
       - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - basketdb
       - rabbitmq
@@ -83,6 +85,7 @@ services:
       - DatabaseSettings__PostgreSqlConnectionString=Host=discountdb;Port=5432;Database=discount;Username=postgres;Password=Admin123!
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
       - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - discountdb
     ports:
@@ -123,6 +126,7 @@ services:
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
       - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - orderingdb
       - rabbitmq
@@ -146,6 +150,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - catalog.api
       - basket.api
@@ -180,12 +185,17 @@ services:
       - ApiSettings__GatewayAddress=http://ocelotapigw:8080
       - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
       - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
+      - IdentityServer__Authority=http://identityserver:8080
+      - IdentityServer__IssuerLoginAddress=http://localhost:8080/connect/authorize
+      - IdentityServer__IssuerLogoutAddress=http://localhost:8080/connect/endsession
+      - IdentityServer__ClientId=mvc_docker
     depends_on:
       - ocelotapigw
       - catalog.api 
       - basket.api
       - discount.api
       - ordering.api
+      - identityserver
     ports:
       - "8006:8080"
       #- "8081" # For https
@@ -231,7 +241,9 @@ services:
       - HealthChecks-UI__HealthChecks__4__Name=Shopping Aggregator Health Check
       - HealthChecks-UI__HealthChecks__4__Uri=http://shopping.aggregator:8080/hc
       - HealthChecks-UI__HealthChecks__5__Name=WebApp Health Check
-      - HealthChecks-UI__HealthChecks__5__Uri=http://webapp:8080/hc
+      - HealthChecks-UI__HealthChecks__5__Uri=http://webapp:8080/hc      
+      - HealthChecks-UI__HealthChecks__6__Name=Identity Server Health Check
+      - HealthChecks-UI__HealthChecks__6__Uri=http://identityserver:8080/hc
     ports:
       - "8007:8080"
 
@@ -252,3 +264,28 @@ services:
     restart: always
     ports:
       - "9411:9411"
+
+# Security
+  identityserverdb:
+    container_name: identityserverdb
+    restart: always
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+    environment:
+      - MYSQL_ROOT_PASSWORD=Admin123!
+    volumes:
+      - identityserver_data:/var/lib/mysql
+
+  identityserver:
+    container_name: identityserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ElasticSearch=http://elasticsearch:9200
+      - ConnectionStrings__Zipkin=http://zipkin:9411/api/v2/spans
+      - ConnectionStrings__IS4MySql=Server=identityserverdb;Database=IS4-Config;Uid=root;Pwd=Admin123!;
+      - ConnectionStrings__IdentityMySql=Server=identityserverdb;Database=IS4-Identity;Uid=root;Pwd=Admin123!;
+      - IdentityServer__IssuerUri=http://identityserver:8080
+    ports:
+      - "8080:8080"
+

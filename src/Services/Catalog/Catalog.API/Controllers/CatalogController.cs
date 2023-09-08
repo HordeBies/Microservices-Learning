@@ -1,6 +1,7 @@
 ﻿using Catalog.DataAccess.Repositories;
 using Catalog.Entities;
 using Catalog.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -24,8 +25,10 @@ namespace Catalog.API.Controllers
 
         [HttpGet(Name = "GetProducts")]
         [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
         {
+            var user = User;
             var products = await productRepository.GetAllProducts();
             return Ok(products);
         }
@@ -33,6 +36,7 @@ namespace Catalog.API.Controllers
         [HttpGet("{id:length(24)}", Name = "GetProduct")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<Product>> GetProductById(string id)
         {
             var product = await productRepository.GetProduct(id);
@@ -47,6 +51,7 @@ namespace Catalog.API.Controllers
         [Route("[action]/{category}", Name = "GetProductByCategory")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategory(string category)
         {
             var products = await productRepository.GetProductsByCategory(category);
@@ -54,7 +59,9 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin,owner")]
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
             await productRepository.CreateProduct(product);
@@ -63,7 +70,9 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "admin,owner")]
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UpdateProduct([FromBody] Product product)
         {
             // TODO: Use a MassTransit to publish an event to RabbitMQ when a product is updated.
@@ -71,7 +80,9 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete("{id:length(24)}", Name = "DeleteProduct")]
+        [Authorize(Roles = "admin,owner")]
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> DeleteProductById(string id)
         {
             // TODO: Use a MassTransit to publish an event to RabbitMQ when a product is no longer available.

@@ -12,6 +12,10 @@
       ],
       "UpstreamPathTemplate": "/Catalog",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      },
       "FileCacheOptions": {
         "TtlSeconds": 60
       }
@@ -27,6 +31,10 @@
       ],
       "UpstreamPathTemplate": "/Catalog/{id}",
       "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      },
       "FileCacheOptions": {
         "TtlSeconds": 60
       }
@@ -42,6 +50,10 @@
       ],
       "UpstreamPathTemplate": "/Catalog/GetProductByCategory/{category}",
       "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      },
       "FileCacheOptions": {
         "TtlSeconds": 60
       }
@@ -57,7 +69,11 @@
         }
       ],
       "UpstreamPathTemplate": "/Basket/{userName}",
-      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ]
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      }
       // Basket is already fetching from redis cache
     },
     {
@@ -71,6 +87,10 @@
       ],
       "UpstreamPathTemplate": "/Basket/{userName}/Checkout",
       "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": { // Rate limiting for checkout, demo purpose
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
@@ -91,6 +111,10 @@
       ],
       "UpstreamPathTemplate": "/Discount",
       "UpstreamHttpMethod": [ "POST", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      },
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
@@ -110,6 +134,10 @@
       ],
       "UpstreamPathTemplate": "/Discount/{couponCode}",
       "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      },
       "FileCacheOptions": {
         "TtlSeconds": 60
       }
@@ -126,6 +154,10 @@
       ],
       "UpstreamPathTemplate": "/Order/{userName}",
       "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
+      },
       "FileCacheOptions": {
         "TtlSeconds": 30
       }

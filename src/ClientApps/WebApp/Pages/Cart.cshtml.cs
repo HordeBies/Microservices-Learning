@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApp.Models;
@@ -7,6 +9,7 @@ using WebApp.Services;
 
 namespace WebApp
 {
+    [Authorize]
     public class CartModel : PageModel
     {
         private readonly IBasketService basketService;
@@ -23,8 +26,7 @@ namespace WebApp
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // TODO: Hard coded userName until identity is implemented
-            var userName = "bies";
+            var userName = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User not found");
             Cart = await basketService.GetBasket(userName);
 
             return Page();
@@ -32,8 +34,7 @@ namespace WebApp
         // TODO: Add OnPostChangeQuantityAsync method, trigger it when quantity field is changed and update the basket
         public async Task<IActionResult> OnPostRemoveToCartAsync(string productId)
         {
-            // TODO: Hard coded userName until identity is implemented
-            var userName = "bies";
+            var userName = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User not found");
             var basket = await basketService.GetBasket(userName);
             basket.DiscountCode = CouponCode;
 

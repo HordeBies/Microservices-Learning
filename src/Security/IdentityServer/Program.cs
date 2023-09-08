@@ -1,15 +1,25 @@
+using Common.Logging;
 using IdentityServer.Data;
 using IdentityServer.Data.Services;
 using IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
-var is4Conn = builder.Configuration.GetConnectionString("IS4-MySql") ?? throw new Exception("IS4-MySql connection string is missing");
-var idConn = builder.Configuration.GetConnectionString("Identity-MySql") ?? throw new Exception("Identity-MySql connection string is missing");
+var is4Conn = builder.Configuration.GetConnectionString("IS4MySql") ?? throw new Exception("IS4MySql connection string is missing");
+var idConn = builder.Configuration.GetConnectionString("IdentityMySql") ?? throw new Exception("IdentityMySql connection string is missing");
+
+builder.Host.UseSerilog(SerilogConfiguration.ConfigureLogger);
+
+builder.Services.AddHealthChecks()
+    .AddMySql(is4Conn, name: "mysql-is4-config", failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy)
+    .AddMySql(idConn, name: "mysql-is4-identity", failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
+
+builder.AddAndConfigureOpenTelemetryTracing();
 
 builder.Services.AddControllersWithViews();
 
@@ -25,6 +35,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddIdentityServer(options =>
 {
+    options.IssuerUri = builder.Configuration["IdentityServer:IssuerUri"];
     options.Events.RaiseErrorEvents = true;
     options.Events.RaiseInformationEvents = true;
     options.Events.RaiseFailureEvents = true;
@@ -46,6 +57,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.HttpOnly = true;
 });
 
 builder.Services.AddScoped<DbInitializerService>();
@@ -61,11 +73,12 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
-app.UseEndpoints(endpoints =>
+app.MapDefaultControllerRoute();
+app.MapHealthChecks("/hc", new()
 {
-    endpoints.MapDefaultControllerRoute();
+    Predicate = _ => true,
+    ResponseWriter = HealthChecks.UI.Client.UIResponseWriter.WriteHealthCheckUIResponse
 });
-
 await InitializeDatabase();
 
 app.Run();

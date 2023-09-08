@@ -6,6 +6,7 @@ using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace Basket.API.Controllers
 {
@@ -28,8 +29,12 @@ namespace Basket.API.Controllers
 
         [HttpGet("{userName}", Name = "GetBasket")]
         [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ShoppingCart>> GetBasket(string userName)
         {
+            if (!User.IsInRole("admin") && User.FindFirst(ClaimTypes.NameIdentifier).Value != userName)
+                return Unauthorized();
+
             var basket = await basketRepository.GetBasket(userName) ?? new ShoppingCart(userName);
             
             return Ok(basket);
@@ -38,8 +43,12 @@ namespace Basket.API.Controllers
         [HttpPost("{userName}", Name = "UpdateBasket")]
         [ProducesResponseType(typeof(ShoppingCart), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ShoppingCart>> UpdateBasket(string userName,[FromBody] ShoppingCart basket)
         {
+            if (!User.IsInRole("admin") && User.FindFirst(ClaimTypes.NameIdentifier).Value != userName)
+                return Unauthorized();
+
             if (userName != basket.UserName)
                 return BadRequest();
 
@@ -65,8 +74,12 @@ namespace Basket.API.Controllers
 
         [HttpDelete("{userName}", Name = "DeleteBasket")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> DeleteBasket(string userName)
         {
+            if (!User.IsInRole("admin") && User.FindFirst(ClaimTypes.NameIdentifier).Value != userName)
+                return Unauthorized();
+
             await basketRepository.DeleteBasket(userName);
             return Ok();
         }
@@ -74,8 +87,12 @@ namespace Basket.API.Controllers
         [HttpPost("{userName}/[action]")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.Accepted)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Checkout(string userName, [FromBody] BasketCheckout basketCheckout)
         {
+            if (!User.IsInRole("admin") && User.FindFirst(ClaimTypes.NameIdentifier).Value != userName)
+                return Unauthorized();
+
             if (userName != basketCheckout.UserName)
                 return BadRequest();
             // get existing basket with total price 

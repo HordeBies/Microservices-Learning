@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApp.Models;
@@ -8,6 +10,7 @@ using WebApp.Services;
 
 namespace WebApp
 {
+    [Authorize]
     public class OrderModel : PageModel
     {
         private readonly IOrderService orderService;
@@ -21,8 +24,7 @@ namespace WebApp
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // TODO: Hard coded userName until identity is implemented
-            var userName = "bies";
+            var userName = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User not found");
             Orders = await orderService.GetOrdersByUserName(userName);
 
             return Page();

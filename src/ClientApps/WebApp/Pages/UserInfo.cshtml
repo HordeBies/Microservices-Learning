@@ -1,0 +1,25 @@
+﻿@page
+@model WebApp.Pages.UserInfoModel
+@{
+    ViewData["Title"] = "User Info";
+}
+
+<h1>User Info</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Claim Type</th>
+            <th>Claim Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.UserInfo.UserInfoDictionary)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td style="word-wrap:anywhere">@item.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>

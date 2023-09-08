@@ -34,7 +34,7 @@ namespace IdentityServer
                     IdentityServerConstants.StandardScopes.OfflineAccess,
                     IdentityServerConstants.StandardScopes.Email,
                     "roles",
-                    "api_rwc"
+                    "api_rwx"
                 }
             },
             new Client
@@ -46,11 +46,11 @@ namespace IdentityServer
                 AllowOfflineAccess = true,
                 RedirectUris = new List<string>()
                 {
-                    "http://webapp:8006/signin-oidc"
+                    "http://localhost:8006/signin-oidc"
                 },
                 PostLogoutRedirectUris = new List<string>()
                 {
-                    "http://webapp:8006/signout-callback-oidc"
+                    "http://localhost:8006/signout-callback-oidc"
                 },
                 ClientSecrets = new List<Secret>
                 {
@@ -64,14 +64,14 @@ namespace IdentityServer
                     IdentityServerConstants.StandardScopes.OfflineAccess,
                     IdentityServerConstants.StandardScopes.Email,
                     "roles",
-                    "api_rwc"
+                    "api_rwx"
                 }
             }
         };
 
         public static IEnumerable<ApiScope> ApiScopes => new List<ApiScope>()
         {
-            new ApiScope("api_rwc", "Api Read/Write/Change", userClaims: new[] { "role" })
+            new ApiScope("api_rwx", "Api Read/Write/Change", userClaims: new[] { "role" })
         };
 
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>()

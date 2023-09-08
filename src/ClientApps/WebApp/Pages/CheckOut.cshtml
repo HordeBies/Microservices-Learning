@@ -56,24 +56,25 @@
         <div class="col-md-8 order-md-1">
             <h4 class="mb-3">Billing address</h4>
             <form asp-page-handler="CheckOut" method="post" class="needs-validation" novalidate>
+                <input readonly hidden type="text" class="form-control" asp-for="Order.UserName" id="username" placeholder="Username" required>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label asp-for="Order.FirstName" for="firstName">First name</label>
-                        <input asp-for="Order.FirstName" type="text" class="form-control" id="firstName" placeholder="" value="" required>
+                        <input asp-for="Order.FirstName" type="text" class="form-control" id="firstName" placeholder="" required>
                         <div class="invalid-feedback">
                             Valid first name is required.
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label asp-for="Order.LastName" for="lastName">Last name</label>
-                        <input asp-for="Order.LastName" type="text" class="form-control" id="lastName" placeholder="" value="" required>
+                        <input asp-for="Order.LastName" type="text" class="form-control" id="lastName" placeholder="" required>
                         <div class="invalid-feedback">
                             Valid last name is required.
                         </div>
                     </div>
                 </div>
 
-                <div class="mb-3">
+@*                 <div class="mb-3">
                     <label for="username">Username</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -84,11 +85,11 @@
                             Your username is required.
                         </div>
                     </div>
-                </div>
+                </div> *@
 
                 <div class="mb-3">
                     <label asp-for="Order.EmailAddress" for="email">Email</label>
-                    <input asp-for="Order.EmailAddress" type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                    <input readonly asp-for="Order.EmailAddress" type="email" class="form-control" id="email" placeholder="you@example.com" required>
                     <div class="invalid-feedback">
                         Please enter a valid email address for shipping updates.
                     </div>

@@ -89,6 +89,17 @@ services:
   zipkin:
     image: openzipkin/zipkin
 
+# Security
+  identityserverdb:
+    image: mysql
+
+
+  identityserver:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: Security/IdentityServer/Dockerfile
+
 volumes:
   catalog_data:
   discount_data:
@@ -97,6 +108,7 @@ volumes:
   pgadmin_data:  
   rabbitmq_data:
   elasticsearch_data:
+  identityserver_data:
 
 
 

@@ -1,5 +1,6 @@
 ﻿using Discount.DataAccess.Repositories;
 using Discount.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -20,6 +21,7 @@ namespace Discount.API.Controllers
         //[HttpGet("{couponCode}/{productId}", Name ="GetProductDiscount")]
         [HttpGet("{couponCode}", Name ="GetDiscount")]
         [ProducesResponseType(typeof(Coupon), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<Coupon>> GetDiscount(string couponCode, [FromQuery] string? productId)
         {
             var coupon = await discountRepository.GetDiscount(couponCode, productId);
@@ -27,8 +29,10 @@ namespace Discount.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin,owner")]
         [ProducesResponseType(typeof(Coupon), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<bool>> CreateDiscount([FromBody] Coupon coupon)
         {
             if ((await discountRepository.GetDiscount(coupon.CouponCode, coupon.ProductId)).Id != -1)
@@ -40,8 +44,10 @@ namespace Discount.API.Controllers
             return Ok(await discountRepository.GetDiscount(coupon.CouponCode, coupon.ProductId));
         }
         [HttpPut]
+        [Authorize(Roles = "admin,owner")]
         [ProducesResponseType(typeof(Coupon), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<bool>> UpdateDiscount([FromBody] Coupon coupon)
         {
             if ((await discountRepository.GetDiscount(coupon.CouponCode, coupon.ProductId)).Id != -1)
@@ -56,8 +62,10 @@ namespace Discount.API.Controllers
         // This requires better design of copuon validation.
         //[HttpDelete("{couponCode}", Name = "DeleteGlobalDiscount")]
         //[HttpDelete("{couponCode}/{productId}", Name = "DeleteProductDiscount")]
+        [Authorize(Roles = "admin,owner")]
         [HttpDelete("{couponCode}", Name = "DeleteDiscount")]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<bool>> DeleteDiscount(string couponCode, [FromQuery]string? productId)
         {
             var deleted = await discountRepository.DeleteDiscount(couponCode, productId);

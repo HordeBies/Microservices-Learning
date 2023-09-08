@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApp.Models;
@@ -8,6 +10,7 @@ using WebApp.Services;
 
 namespace WebApp.Pages
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly ICatalogService catalogService;
@@ -29,8 +32,8 @@ namespace WebApp.Pages
 
         public async Task<IActionResult> OnPostAddToCartAsync(string productId, string? CouponCode)
         {
-            // TODO: Hard coded userName until identity is implemented
-            var userName = "bies";
+            var userName = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User not found");
+
             var product = await catalogService.GetCatalog(productId);
 
             var basket = await basketService.GetBasket(userName);

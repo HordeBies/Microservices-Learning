@@ -14,10 +14,17 @@ namespace IdentityServerHost.Quickstart.UI
     [Authorize]
     public class DiagnosticsController : Controller
     {
+        private readonly ILogger<DiagnosticsController> logger;
+
+        public DiagnosticsController(ILogger<DiagnosticsController> logger)
+        {
+            this.logger = logger;
+        }
+
         public async Task<IActionResult> Index()
         {
             var localAddresses = new string[] { "127.0.0.1", "::1", HttpContext.Connection.LocalIpAddress.ToString() };
-            if (!localAddresses.Contains(HttpContext.Connection.RemoteIpAddress.ToString()))
+            if (false && !localAddresses.Contains(HttpContext.Connection.RemoteIpAddress.ToString()))
             {
                 return NotFound();
             }

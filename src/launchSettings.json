@@ -12,7 +12,8 @@
         "ocelotapigw": "StartDebugging",
         "shopping.aggregator": "StartDebugging",
         "webapp": "StartDebugging",
-        "webstatus": "StartDebugging"
+        "webstatus": "StartDebugging",
+        "identityserver": "StartDebugging"
       }
     }
   }

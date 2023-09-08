@@ -13,6 +13,7 @@
   <ItemGroup>
 	<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="7.0.0" />
 	<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.1.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0-preview.7.23375.9" />
