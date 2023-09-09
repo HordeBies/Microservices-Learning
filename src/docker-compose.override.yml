@@ -30,6 +30,7 @@ services:
       - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - catalogdb
+      - identityserver
     ports:
       - "8000:8080"
 
@@ -52,6 +53,7 @@ services:
     depends_on:
       - basketdb
       - rabbitmq
+      - identityserver
     ports:
       - "8001:8080"
   
@@ -88,6 +90,7 @@ services:
       - IdentityServer__Authority=http://identityserver:8080
     depends_on:
       - discountdb
+      - identityserver
     ports:
       - "8002:8080"
 
@@ -130,6 +133,7 @@ services:
     depends_on:
       - orderingdb
       - rabbitmq
+      - identityserver
     ports:
       - "8004:8080"
     volumes:
@@ -157,6 +161,7 @@ services:
       - discount.api
       - discount.grpc
       - ordering.api
+      - identityserver
     ports:
       - "8010:8080"
 
