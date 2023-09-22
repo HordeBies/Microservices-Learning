@@ -44,7 +44,7 @@ namespace Ordering.Application.Features.Orders.Commands.CheckoutOrder
         { // TODO: Use Identity Service to get mail
             var email = new Email()
             {
-                To = "oa.mehmetdmrc@gmail.com",
+                To = order.EmailAddress,
                 Body = $"Order was created.",
                 Subject = "Order was created."
             };
